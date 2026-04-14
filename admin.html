@@ -33,37 +33,36 @@
                 </div>
                 <div class="form-body">
                     <form id="formPlanta" enctype="multipart/form-data">
-    <div class="form-row">
-        <div class="form-group">
-            <label>Nombre común *</label>
-            <input type="text" id="nombre_comun" required>
-        </div>
-        <div class="form-group">
-            <label>Nombre científico *</label>
-            <input type="text" id="nombre_cientifico" required>
-        </div>
-    </div>
-    <div class="form-row">
-        <div class="form-group">
-            <label>Familia</label>
-            <input type="text" id="familia">
-        </div>
-    </div>
-    <div class="form-group">
-        <label>Descripción</label>
-        <textarea id="descripcion" rows="3"></textarea>
-    </div>
-    <div class="form-group">
-        <label>Usos medicinales</label>
-        <textarea id="usos" rows="2"></textarea>
-    </div>
-    <div class="form-group">
-        <label>Imagen de la planta (archivo)</label>
-        <input type="file" id="imagen" accept="image/*" required>
-    </div>
-    <button type="submit" class="btn btn-primary">Registrar Planta</button>
-</form>
-
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Nombre común *</label>
+                                <input type="text" id="nombre_comun" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Nombre científico *</label>
+                                <input type="text" id="nombre_cientifico" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Familia</label>
+                                <input type="text" id="familia">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Descripción</label>
+                            <textarea id="descripcion" rows="3"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Usos medicinales</label>
+                            <textarea id="usos" rows="2"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Imagen de la planta (archivo)</label>
+                            <input type="file" id="imagen" accept="image/*" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Registrar Planta</button>
+                    </form>
                     <div id="mensajeAdmin"></div>
                 </div>
             </div>
@@ -81,37 +80,43 @@
     <script>
         const form = document.getElementById('formPlanta');
 
-form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const formData = new FormData();
-    formData.append('nombre_comun', document.getElementById('nombre_comun').value);
-    formData.append('nombre_cientifico', document.getElementById('nombre_cientifico').value);
-    formData.append('familia', document.getElementById('familia').value);
-    formData.append('descripcion', document.getElementById('descripcion').value);
-    formData.append('usos', document.getElementById('usos').value);
-    
-    const categoriasSelect = document.getElementById('categorias');
-    const categoriasSeleccionadas = Array.from(categoriasSelect.selectedOptions).map(opt => opt.value);
-    formData.append('categorias', categoriasSeleccionadas.join(','));
-    
-    const imagenFile = document.getElementById('imagen').files[0];
-    if (imagenFile) {
-        formData.append('imagen', imagenFile);
-    }
-    
-    const response = await fetch('api/guardar_planta.php', {
-        method: 'POST',
-        body: formData
-    });
-    const result = await response.json();
-    if (result.success) {
-        alert('Planta registrada correctamente');
-        form.reset();
-    } else {
-        alert('Error: ' + result.error);
-    }
-});
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData();
+            formData.append('nombre_comun', document.getElementById('nombre_comun').value);
+            formData.append('nombre_cientifico', document.getElementById('nombre_cientifico').value);
+            formData.append('familia', document.getElementById('familia').value);
+            formData.append('descripcion', document.getElementById('descripcion').value);
+            formData.append('usos', document.getElementById('usos').value);
+            
+            // Ya no hay categorías, así que omitimos esa parte
+            
+            const imagenFile = document.getElementById('imagen').files[0];
+            if (imagenFile) {
+                formData.append('imagen', imagenFile);
+            }
+            
+            try {
+                const response = await fetch('api/guardar_planta.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                if (result.success) {
+                    const mensajeDiv = document.getElementById('mensajeAdmin');
+                    mensajeDiv.innerHTML = `<div class="alert alert-success">✅ Planta registrada correctamente.</div>`;
+                    form.reset();
+                    setTimeout(() => {
+                        mensajeDiv.innerHTML = '';
+                    }, 4000);
+                } else {
+                    alert('Error: ' + result.error);
+                }
+            } catch (error) {
+                alert('Error de conexión: ' + error.message);
+            }
+        });
     </script>
 
     <style>
