@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrar | Herbario Digital</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <div class="top-bar">
+            <div class="header-content">
+                <div class="logo-area">
+                    <div class="logo-icon">🌿</div>
+                    <div class="logo-text">
+                        <h1>Herbario Digital</h1>
+                        <p>Panel de Administración</p>
+                    </div>
+                </div>
+                <nav class="nav-tabs">
+                    <a href="index.html" class="nav-tab">Inicio</a>
+                    <a href="catalogo.html" class="nav-tab">Catálogo</a>
+                    <a href="admin.html" class="nav-tab active">Administrar</a>
+                </nav>
+            </div>
+        </div>
+
+        <main class="main-content">
+            <div class="form-container">
+                <div class="form-header">
+                    <h2>📌 Registrar Nueva Especie</h2>
+                    <p>Complete el formulario para agregar una nueva planta al catálogo botánico</p>
+                </div>
+                <div class="form-body">
+                    <form id="formPlanta" enctype="multipart/form-data">
+    <div class="form-row">
+        <div class="form-group">
+            <label>Nombre común *</label>
+            <input type="text" id="nombre_comun" required>
+        </div>
+        <div class="form-group">
+            <label>Nombre científico *</label>
+            <input type="text" id="nombre_cientifico" required>
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group">
+            <label>Familia</label>
+            <input type="text" id="familia">
+        </div>
+        <div class="form-group">
+            <label>Categorías (Ctrl+clic para múltiples)</label>
+            <select id="categorias" multiple>
+                <!-- Las categorías se cargarán desde PHP -->
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Descripción</label>
+        <textarea id="descripcion" rows="3"></textarea>
+    </div>
+    <div class="form-group">
+        <label>Usos medicinales</label>
+        <textarea id="usos" rows="2"></textarea>
+    </div>
+    <div class="form-group">
+        <label>Imagen de la planta (archivo)</label>
+        <input type="file" id="imagen" accept="image/*" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Registrar Planta</button>
+</form>
+
+                    <div id="mensajeAdmin"></div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <p>🌿 Herbario Digital · Panel de Administración</p>
+                <p>Aldo Saldaña & Marco Sánchez · Proyecto de Titulación</p>
+                <p>Técnico en Programación · © 2026</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        const form = document.getElementById('formPlanta');
+
+form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const formData = new FormData();
+    formData.append('nombre_comun', document.getElementById('nombre_comun').value);
+    formData.append('nombre_cientifico', document.getElementById('nombre_cientifico').value);
+    formData.append('familia', document.getElementById('familia').value);
+    formData.append('descripcion', document.getElementById('descripcion').value);
+    formData.append('usos', document.getElementById('usos').value);
+    
+    const categoriasSelect = document.getElementById('categorias');
+    const categoriasSeleccionadas = Array.from(categoriasSelect.selectedOptions).map(opt => opt.value);
+    formData.append('categorias', categoriasSeleccionadas.join(','));
+    
+    const imagenFile = document.getElementById('imagen').files[0];
+    if (imagenFile) {
+        formData.append('imagen', imagenFile);
+    }
+    
+    const response = await fetch('api/guardar_planta.php', {
+        method: 'POST',
+        body: formData
+    });
+    const result = await response.json();
+    if (result.success) {
+        alert('Planta registrada correctamente');
+        form.reset();
+    } else {
+        alert('Error: ' + result.error);
+    }
+});
+    </script>
+
+    <style>
+        .alert {
+            padding: var(--space-4) var(--space-5);
+            border-radius: var(--radius-lg);
+            margin-top: var(--space-6);
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+        .alert-success {
+            background: #ecfdf5;
+            border-left: 4px solid #2ecc71;
+            color: #065f46;
+        }
+    </style>
+</body>
+</html>

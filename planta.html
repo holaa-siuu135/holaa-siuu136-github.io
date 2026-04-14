@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ficha Técnica | Herbario Digital</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <div class="top-bar">
+            <div class="header-content">
+                <div class="logo-area">
+                    <div class="logo-icon">🌿</div>
+                    <div class="logo-text">
+                        <h1>Herbario Digital</h1>
+                        <p>Ficha Técnica</p>
+                    </div>
+                </div>
+                <nav class="nav-tabs">
+                    <a href="index.html" class="nav-tab">Inicio</a>
+                    <a href="catalogo.html" class="nav-tab">Catálogo</a>
+                    <a href="admin.html" class="nav-tab">Administrar</a>
+                </nav>
+            </div>
+        </div>
+
+        <main class="main-content" id="ficha-container">
+            <div style="text-align: center; padding: var(--space-16);">
+                <div style="width: 50px; height: 50px; border: 3px solid var(--gray-200); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto var(--space-4);"></div>
+                <p>Cargando información...</p>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <p>🌿 Herbario Digital · Ficha Técnica</p>
+                <p>Aldo Saldaña & Marco Sánchez · Proyecto de Titulación</p>
+                <p>Técnico en Programación · © 2026</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        const plantasBase = {
+            lavanda: {
+                nombre: "Lavanda",
+                cientifico: "Lavandula angustifolia",
+                familia: "Lamiaceae",
+                origen: "Región mediterránea",
+                imagen: "https://images.unsplash.com/photo-1597843786277-1020f5b2d9c3?w=800&h=600&fit=crop",
+                descripcion: "Planta perenne de porte arbustivo, alcanza hasta 1 metro de altura. Sus hojas son lineares, de color gris-verdosas, y sus flores se agrupan en espigas terminales de color violeta o azul. Posee un aroma intenso y característico debido a sus aceites esenciales.",
+                usos: "Ampliamente utilizada en aromaterapia por sus propiedades relajantes y ansiolíticas. En la industria cosmética se emplea en perfumes, jabones y cremas. En medicina tradicional se usa como antiséptico, antiinflamatorio y para tratar el insomnio.",
+                habitat: "Prefiere climas cálidos y soleados, con suelos calcáreos y bien drenados. Resiste bien la sequía y las altas temperaturas.",
+                colector: "Aldo Saldaña",
+                fechaColecta: "15 de marzo de 2026"
+            },
+            romero: {
+                nombre: "Romero",
+                cientifico: "Salvia rosmarinus",
+                familia: "Lamiaceae",
+                origen: "Región mediterránea",
+                imagen: "https://images.unsplash.com/photo-1515709984626-53e9a19b0f13?w=800&h=600&fit=crop",
+                descripcion: "Arbusto perenne que puede alcanzar hasta 2 metros de altura. Hojas lineares, coriáceas, de color verde oscuro por el haz y blanquecinas por el envés. Flores pequeñas de color azul, blanco o rosado.",
+                usos: "Excelente estimulante de la circulación sanguínea y la memoria. Se usa en cocina para condimentar carnes y guisos. En cosmética, fortalece el cabello y combate la caspa.",
+                habitat: "Crece en laderas soleadas y suelos calcáreos. Muy resistente a la sequía.",
+                colector: "Aldo Saldaña",
+                fechaColecta: "10 de marzo de 2026"
+            },
+            manzanilla: {
+                nombre: "Manzanilla",
+                cientifico: "Matricaria chamomilla",
+                familia: "Asteraceae",
+                origen: "Europa y Asia occidental",
+                imagen: "https://images.unsplash.com/photo-1589561084283-930aa7b1ce50?w=800&h=600&fit=crop",
+                descripcion: "Planta herbácea anual de hasta 60 cm de altura. Tallos erectos y ramificados, hojas finamente divididas. Flores en capítulos con lígulas blancas y disco central amarillo.",
+                usos: "Tradicionalmente usada para problemas digestivos, calmar la ansiedad y como antiinflamatorio. Las infusiones de manzanilla son populares para cólicos, gastritis y como sedante suave.",
+                habitat: "Crece en campos cultivados, bordes de caminos y terrenos húmedos. Prefiere suelos ricos en nutrientes.",
+                colector: "Marco Sánchez",
+                fechaColecta: "22 de marzo de 2026"
+            }
+        };
+
+        function cargarPlantasGuardadas() {
+            const guardadas = JSON.parse(localStorage.getItem('plantas')) || [];
+            const plantasObj = {};
+            guardadas.forEach(planta => {
+                plantasObj[planta.id] = planta;
+            });
+            return plantasObj;
+        }
+
+        const todasLasPlantas = { ...plantasBase, ...cargarPlantasGuardadas() };
+
+        function obtenerParametro(nombre) {
+            const params = new URLSearchParams(window.location.search);
+            return params.get(nombre);
+        }
+
+        function mostrarFicha() {
+            const identificador = obtenerParametro('nombre');
+            const contenedor = document.getElementById('ficha-container');
+            const datos = todasLasPlantas[identificador];
+
+            if (datos) {
+                contenedor.innerHTML = `
+                    <div class="detail-card">
+                        <div class="detail-header">
+                            <h1>${datos.nombre}</h1>
+                            <p class="scientific">${datos.cientifico}</p>
+                        </div>
+                        <div class="detail-body">
+                            <img src="${datos.imagen}" alt="${datos.nombre}" class="detail-image">
+                            
+                            <div class="detail-grid">
+                                <div class="info-box">
+                                    <h3>🌱 Familia</h3>
+                                    <p>${datos.familia}</p>
+                                </div>
+                                <div class="info-box">
+                                    <h3>🌍 Origen</h3>
+                                    <p>${datos.origen || 'No especificado'}</p>
+                                </div>
+                                <div class="info-box">
+                                    <h3>📖 Descripción</h3>
+                                    <p>${datos.descripcion}</p>
+                                </div>
+                                <div class="info-box">
+                                    <h3>💚 Usos</h3>
+                                    <p>${datos.usos}</p>
+                                </div>
+                                <div class="info-box">
+                                    <h3>🏞️ Hábitat</h3>
+                                    <p>${datos.habitat || 'No especificado'}</p>
+                                </div>
+                                <div class="info-box">
+                                    <h3>👨‍🌾 Datos de colecta</h3>
+                                    <p><strong>Colector:</strong> ${datos.colector || 'No especificado'}<br>
+                                    <strong>Fecha:</strong> ${datos.fechaColecta || 'No especificada'}</p>
+                                </div>
+                            </div>
+                            
+                            <div style="text-align: center; margin-top: var(--space-8);">
+                                <a href="catalogo.html" class="btn btn-outline">← Volver al Catálogo</a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                contenedor.innerHTML = `
+                    <div class="form-container" style="text-align: center; padding: var(--space-16);">
+                        <h2 style="color: var(--gray-600); margin-bottom: var(--space-4);">🌿 Especie no encontrada</h2>
+                        <p style="color: var(--gray-500); margin-bottom: var(--space-6);">No tenemos información sobre la planta solicitada.</p>
+                        <a href="catalogo.html" class="btn btn-primary">Explorar Catálogo</a>
+                    </div>
+                `;
+            }
+        }
+
+        window.onload = mostrarFicha;
+    </script>
+
+    <style>
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</body>
+</html>

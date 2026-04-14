@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo | Herbario Digital</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <div class="top-bar">
+            <div class="header-content">
+                <div class="logo-area">
+                    <div class="logo-icon">🌿</div>
+                    <div class="logo-text">
+                        <h1>Herbario Digital</h1>
+                        <p>Plataforma Botánica Profesional</p>
+                    </div>
+                </div>
+                <nav class="nav-tabs">
+                    <a href="index.html" class="nav-tab">Inicio</a>
+                    <a href="catalogo.html" class="nav-tab active">Catálogo</a>
+                    <a href="admin.html" class="nav-tab">Administrar</a>
+                </nav>
+            </div>
+        </div>
+
+        <main class="main-content">
+            <div class="section-title">
+                <h2>Catálogo Completo</h2>
+                <div class="stats-badge">
+                    <span class="badge" id="plantasCount">Cargando...</span>
+                </div>
+            </div>
+
+            <div class="cards-grid" id="catalogoGrid">
+                <div class="plant-card skeleton" style="height: 420px;"></div>
+                <div class="plant-card skeleton" style="height: 420px;"></div>
+                <div class="plant-card skeleton" style="height: 420px;"></div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <p>🌿 Herbario Digital · Plataforma Botánica Profesional</p>
+                <p>Aldo Saldaña & Marco Sánchez · Proyecto de Titulación</p>
+                <p>Técnico en Programación · © 2026</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        const catalogoBase = [
+            {
+                id: "lavanda",
+                nombre: "Lavanda",
+                cientifico: "Lavandula angustifolia",
+                familia: "Lamiaceae",
+                imagen: "lavanda.jpeg",
+                usos: "Propiedades relajantes, ansiolíticas y antisépticas. Ideal para aromaterapia, infusiones y productos cosméticos."
+            },
+            {
+                id: "romero",
+                nombre: "Romero",
+                cientifico: "Salvia rosmarinus",
+                familia: "Lamiaceae",
+                imagen: "romero.jpeg",
+                usos: "Estimulante, antioxidante. Mejora la memoria y la circulación. Uso culinario, cosmético y medicinal."
+            },
+            {
+                id: "manzanilla",
+                nombre: "Manzanilla",
+                cientifico: "Matricaria chamomilla",
+                familia: "Asteraceae",
+                imagen: "manzanilla.jpeg",
+                usos: "Digestiva, antiinflamatoria y calmante. Tradicionalmente usada para trastornos digestivos y ansiedad."
+            },
+            {
+                id: "ruda",
+                nombre: "Ruda",
+                cientifico: "Ruta graveolens",
+                familia: "Rutaceae",
+                imagen: "ruda.jpeg",
+                usos: "Propiedades digestivas y emenagogas. Uso tradicional con precaución por su toxicidad."
+            },
+            {
+                id: "albahaca",
+                nombre: "Albahaca",
+                cientifico: "Ocimum basilicum",
+                familia: "Lamiaceae",
+                imagen: "albahaca.jpeg",
+                usos: "Culinaria, aromática. Propiedades digestivas, antiinflamatorias y antioxidantes."
+            },
+            {
+                id: "menta",
+                nombre: "Menta",
+                cientifico: "Mentha piperita",
+                familia: "Lamiaceae",
+                imagen: "menta.jpeg",
+                usos: "Digestiva, refrescante. Ideal para infusiones, aromaterapia y problemas respiratorios."
+            }
+        ];
+
+        function cargarPlantasGuardadas() {
+            const guardadas = JSON.parse(localStorage.getItem('plantas')) || [];
+            return guardadas;
+        }
+
+        const plantasGuardadas = cargarPlantasGuardadas();
+        const todasLasPlantas = [...catalogoBase, ...plantasGuardadas];
+        
+        document.getElementById('plantasCount').textContent = `${todasLasPlantas.length} especies`;
+
+        function renderizarCatalogo() {
+            const grid = document.getElementById('catalogoGrid');
+            grid.innerHTML = todasLasPlantas.map(planta => `
+                <div class="plant-card">
+                    <div class="card-image">
+                        <img src="${planta.imagen}" alt="${planta.nombre}" loading="lazy">
+                        ${planta.id?.startsWith('planta_') ? '<span class="card-badge">Nueva</span>' : ''}
+                    </div>
+                    <div class="card-content">
+                        <h3>${planta.nombre}</h3>
+                        <span class="card-scientific"><em>${planta.cientifico}</em></span>
+                        <p class="card-description">${(planta.usos || planta.descripcion || '').substring(0, 100)}${(planta.usos || planta.descripcion || '').length > 100 ? '...' : ''}</p>
+                        <div class="card-footer">
+                            <span class="badge">${planta.familia || 'Angiosperma'}</span>
+                            <a href="planta.html?nombre=${planta.id || encodeURIComponent(planta.nombre.toLowerCase())}" class="btn btn-outline btn-small">Ver detalles →</a>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        renderizarCatalogo();
+    </script>
+
+    <style>
+        .stats-badge {
+            background: var(--gray-100);
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-full);
+        }
+        .badge {
+            font-size: 0.7rem;
+            padding: 0.25rem 0.75rem;
+            background: var(--gray-100);
+            color: var(--gray-600);
+            border-radius: 9999px;
+            font-weight: 500;
+        }
+        .skeleton {
+            background: linear-gradient(90deg, var(--gray-200) 25%, var(--gray-100) 50%, var(--gray-200) 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: var(--radius-xl);
+        }
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+    </style>
+</body>
+</html>

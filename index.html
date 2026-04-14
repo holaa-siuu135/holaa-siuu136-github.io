@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Herbario Digital | Plataforma Botánica</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <div class="top-bar">
+            <div class="header-content">
+                <div class="logo-area">
+                    <div class="logo-icon">🌿</div>
+                    <div class="logo-text">
+                        <h1>Herbario Digital</h1>
+                        <p>Plataforma Botánica Profesional</p>
+                    </div>
+                </div>
+                <nav class="nav-tabs">
+                    <a href="index.html" class="nav-tab active">Inicio</a>
+                    <a href="catalogo.html" class="nav-tab">Catálogo</a>
+                    <a href="admin.html" class="nav-tab">Administrar</a>
+                </nav>
+            </div>
+        </div>
+
+        <main class="main-content">
+            <section class="hero-section">
+                <h1>Bienvenidos al Herbario Digital</h1>
+                <p>Explora nuestra colección de plantas medicinales y ornamentales. Un espacio dedicado a la preservación y difusión del conocimiento botánico.</p>
+                <a href="catalogo.html" class="btn btn-primary">Explorar Catálogo →</a>
+            </section>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">🌿</div>
+                    <div class="stat-info">
+                        <h3 id="totalPlantas">0</h3>
+                        <p>Especies Registradas</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🏥</div>
+                    <div class="stat-info">
+                        <h3>15+</h3>
+                        <p>Usos Medicinales</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📚</div>
+                    <div class="stat-info">
+                        <h3>6</h3>
+                        <p>Familias Botánicas</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-info">
+                        <h3>2</h3>
+                        <p>Investigadores</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-title">
+                <h2>Plantas Destacadas</h2>
+                <a href="catalogo.html" class="btn btn-outline btn-small">Ver todas →</a>
+            </div>
+
+            <div class="cards-grid" id="plantasDestacadas">
+                <div class="plant-card skeleton" style="height: 380px;"></div>
+                <div class="plant-card skeleton" style="height: 380px;"></div>
+                <div class="plant-card skeleton" style="height: 380px;"></div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <p>🌿 Herbario Digital · Plataforma Botánica Profesional</p>
+                <p>Aldo Saldaña & Marco Sánchez · Proyecto de Titulación</p>
+                <p>Técnico en Programación · © 2026</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        const plantasBase = [
+            {
+                id: "lavanda",
+                nombre: "Lavanda",
+                cientifico: "Lavandula angustifolia",
+                familia: "Lamiaceae",
+                imagen: "lavanda.jpeg",
+                usos: "Propiedades relajantes, ansiolíticas y antisépticas. Ideal para aromaterapia e infusiones."
+            },
+            {
+                id: "romero",
+                nombre: "Romero",
+                cientifico: "Salvia rosmarinus",
+                familia: "Lamiaceae",
+                imagen: "romero.jpeg",
+                usos: "Estimulante, antioxidante. Mejora la memoria y la circulación. Uso culinario y cosmético."
+            },
+            {
+                id: "manzanilla",
+                nombre: "Manzanilla",
+                cientifico: "Matricaria chamomilla",
+                familia: "Asteraceae",
+                imagen: "manzanilla.jpeg",
+                usos: "Digestiva, antiinflamatoria y calmante. Ideal para infusiones y tratamientos digestivos."
+            }
+        ];
+
+        function cargarPlantasGuardadas() {
+            const guardadas = JSON.parse(localStorage.getItem('plantas')) || [];
+            return guardadas;
+        }
+
+        const plantasGuardadas = cargarPlantasGuardadas();
+        const todasLasPlantas = [...plantasBase, ...plantasGuardadas];
+        
+        document.getElementById('totalPlantas').textContent = todasLasPlantas.length;
+
+        const destacadas = todasLasPlantas.slice(0, 3);
+
+        function renderizarDestacadas() {
+            const grid = document.getElementById('plantasDestacadas');
+            grid.innerHTML = destacadas.map(planta => `
+                <div class="plant-card">
+                    <div class="card-image">
+                        <img src="${planta.imagen}" alt="${planta.nombre}" loading="lazy">
+                        <span class="card-badge">Destacada</span>
+                    </div>
+                    <div class="card-content">
+                        <h3>${planta.nombre}</h3>
+                        <span class="card-scientific"><em>${planta.cientifico}</em></span>
+                        <p class="card-description">${(planta.usos || planta.descripcion || '').substring(0, 100)}${(planta.usos || planta.descripcion || '').length > 100 ? '...' : ''}</p>
+                        <div class="card-footer">
+                            <span class="badge">${planta.familia || 'Angiosperma'}</span>
+                            <a href="planta.html?nombre=${planta.id || encodeURIComponent(planta.nombre.toLowerCase())}" class="btn btn-outline btn-small">Ver detalles →</a>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        renderizarDestacadas();
+    </script>
+
+    <style>
+        .badge {
+            font-size: 0.7rem;
+            padding: 0.25rem 0.75rem;
+            background: var(--gray-100);
+            color: var(--gray-600);
+            border-radius: var(--radius-full);
+            font-weight: 500;
+        }
+        .skeleton {
+            background: linear-gradient(90deg, var(--gray-200) 25%, var(--gray-100) 50%, var(--gray-200) 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: var(--radius-xl);
+        }
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        .radius-full {
+            border-radius: 9999px;
+        }
+    </style>
+</body>
+</html>
